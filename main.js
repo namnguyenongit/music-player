@@ -15,8 +15,16 @@ const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
 const playlist = $('.playlist')
+const cd = $('.cd')
+const audio = $('#audio')
+const player = $('.player')
+const playBtn = $('.btn-toggle-play')
+const songName = $('.dashboard > header > h2')
+const cdThumb = $('.cd-thumb')
 
 const app = {
+  currentIndex: 0,
+  isPlaying: false,
   songs: [
     {
       name: 'Bad Habits',
@@ -98,8 +106,51 @@ const app = {
     })
     playlist.innerHTML = htmls.join('')
   },
+  // Load current song
+  currentSong: function () {
+    let song = this.songs[this.currentIndex]
+    audio.setAttribute('src', song.path)
+    songName.innerText = song.name
+    cdThumb.style.backgroundImage = 'url(' + song.image + ')'
+  },
+
+  // Handle events of users
+  handleEvent: function () {
+    // When users scroll
+    const _this = this
+    document.onscroll = function () {
+      cd.style.width =
+        200 - window.scrollY > 0 ? 200 - window.scrollY + 'px' : 0
+      cd.style.opacity =
+        200 - window.scrollY > 0 ? (200 - window.scrollY) / 200 : 0
+    }
+
+    // When users hit play button
+    playBtn.onclick = function () {
+      // Playing
+      if (!this.isPlaying) {
+        this.isPlaying = !this.isPlaying
+        audio.play()
+        player.classList.add('playing')
+      }
+      // Pause
+      else {
+        this.isPlaying = !this.isPlaying
+        audio.pause()
+        player.classList.remove('playing')
+      }
+    }
+  },
+
   // Start the application
   start: function () {
+    // Handle events of users
+    this.handleEvent()
+
+    // Take current song data
+    this.currentSong()
+
+    // Render songs to view
     this.render()
   },
 }
