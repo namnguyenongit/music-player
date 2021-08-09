@@ -1,9 +1,9 @@
 /**
- * 1. Render songs
- * 2. Scroll top
- * 3. Play / pause / stop
- * 4. CD rotate
- * 5. Next / Previous
+ * 1. Render songs -> done
+ * 2. Scroll top -> done
+ * 3. Play / pause / seek -> done
+ * 4. CD rotate -> done
+ * 5. Next / Previous -> done
  * 6. Random
  * 7. Next / repeat when song ended
  * 8. Active song
@@ -21,6 +21,10 @@ const player = $('.player')
 const playBtn = $('.btn-toggle-play')
 const songName = $('.dashboard > header > h2')
 const cdThumb = $('.cd-thumb')
+const progress = $('.progress')
+const prevBtn = $('.btn-prev')
+const nextBtn = $('.btn-next')
+const randomBtn = $('.btn-random')
 
 const app = {
   currentIndex: 0,
@@ -106,16 +110,14 @@ const app = {
     })
     playlist.innerHTML = htmls.join('')
   },
-  // Load current song
-  currentSong: function () {
-    let song = this.songs[this.currentIndex]
-    audio.setAttribute('src', song.path)
-    songName.innerText = song.name
-    cdThumb.style.backgroundImage = 'url(' + song.image + ')'
-  },
-
   // Handle events of users
   handleEvent: function () {
+    // Handle scrolling CD
+    const cdThumbAnimate = cdThumb.animate([{ transform: 'rotate(360deg)' }], {
+      duration: 20000,
+      iterations: Infinity,
+    })
+    cdThumbAnimate.pause()
     // When users scroll
     const _this = this
     document.onscroll = function () {
@@ -124,31 +126,81 @@ const app = {
       cd.style.opacity =
         200 - window.scrollY > 0 ? (200 - window.scrollY) / 200 : 0
     }
-
     // When users hit play button
     playBtn.onclick = function () {
-      // Playing
-      if (!this.isPlaying) {
-        this.isPlaying = !this.isPlaying
+      if (!_this.isPlaying) {
         audio.play()
-        player.classList.add('playing')
-      }
-      // Pause
-      else {
-        this.isPlaying = !this.isPlaying
+      } else {
         audio.pause()
-        player.classList.remove('playing')
       }
     }
+    // When users hit next button
+    nextBtn.onclick = function () {
+      _this.nextSong()
+      audio.play()
+    }
+    // When users hit previous button
+    prevBtn.onclick = function () {
+      _this.prevSong()
+      audio.play()
+    }
+    // While song is being played
+    audio.onplay = function () {
+      player.classList.add('playing')
+      _this.isPlaying = !_this.isPlaying
+      cdThumbAnimate.play()
+    }
+    // While song is being paused
+    audio.onpause = function () {
+      player.classList.remove('playing')
+      _this.isPlaying = !_this.isPlaying
+      cdThumbAnimate.pause()
+    }
+    // Progress bar follows the music
+    audio.ontimeupdate = function () {
+      if (audio.duration) {
+        const progressPrecent = Math.floor(
+          (audio.currentTime / audio.duration) * 100
+        )
+        progress.value = progressPrecent
+      }
+    }
+    // While song is being seeked
+    progress.oninput = function (e) {
+      var newTime = (e.target.value * audio.duration) / 100
+      audio.currentTime = newTime
+    }
   },
-
+  // Load current song
+  loadCurrentSong: function () {
+    let currentSong = this.songs[this.currentIndex]
+    audio.setAttribute('src', currentSong.path)
+    songName.innerText = currentSong.name
+    cdThumb.style.backgroundImage = 'url(' + currentSong.image + ')'
+  },
+  // Load next song
+  nextSong: function () {
+    this.currentIndex++
+    if (this.currentIndex > this.songs.length - 1) {
+      this.currentIndex = 0
+    }
+    this.loadCurrentSong()
+  },
+  // Load previous song
+  prevSong: function () {
+    this.currentIndex--
+    if (this.currentIndex < 0) {
+      this.currentIndex = this.songs.length - 1
+    }
+    this.loadCurrentSong()
+  },
   // Start the application
   start: function () {
     // Handle events of users
     this.handleEvent()
 
     // Take current song data
-    this.currentSong()
+    this.loadCurrentSong()
 
     // Render songs to view
     this.render()
