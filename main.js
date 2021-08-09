@@ -14,6 +14,8 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
+const playlist = $('.playlist')
+
 const app = {
   songs: [
     {
@@ -74,7 +76,31 @@ const app = {
       name: 'The Most Beautiful Thing',
       singer: 'Bruno Major',
       path: './assets/songs/TheMostBeautifulThing.mp3',
-      image: './assets/images/TheMostBeautifulThing.png',
+      image: './assets/images/TheMostBeautifulThing.jpg',
     },
   ],
+  // Render songs to view
+  render: function () {
+    const htmls = this.songs.map((song) => {
+      return `
+        <div class="song">
+          <div class="thumb" style="background-image: url('${song.image}')">
+          </div>
+          <div class="body">
+            <h3 class="title">${song.name}</h3>
+            <p class="author">${song.singer}</p>
+          </div>
+          <div class="option">
+            <i class="fas fa-ellipsis-h"></i>
+          </div>
+        </div>
+      `
+    })
+    playlist.innerHTML = htmls.join('')
+  },
+  // Start the application
+  start: function () {
+    this.render()
+  },
 }
+app.start()
