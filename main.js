@@ -4,9 +4,9 @@
  * 3. Play / pause / seek -> done
  * 4. CD rotate -> done
  * 5. Next / Previous -> done
- * 6. Random
- * 7. Next / repeat when song ended
- * 8. Active song
+ * 6. Random -> done
+ * 7. Next / repeat when song ended -> done
+ * 8. Active song -> done
  * 9. Scroll active song into view
  * 10. Play song when click on song list
  */
@@ -25,10 +25,13 @@ const progress = $('.progress')
 const prevBtn = $('.btn-prev')
 const nextBtn = $('.btn-next')
 const randomBtn = $('.btn-random')
+const repeatBtn = $('.btn-repeat')
 
 const app = {
   currentIndex: 0,
   isPlaying: false,
+  isRandom: false,
+  isRepeat: false,
   songs: [
     {
       name: 'Bad Habits',
@@ -93,9 +96,9 @@ const app = {
   ],
   // Render songs to view
   render: function () {
-    const htmls = this.songs.map((song) => {
+    const htmls = this.songs.map((song, index) => {
       return `
-        <div class="song">
+        <div class="song ${index === this.currentIndex ? 'active' : ''}">
           <div class="thumb" style="background-image: url('${song.image}')">
           </div>
           <div class="body">
@@ -112,6 +115,7 @@ const app = {
   },
   // Handle events of users
   handleEvent: function () {
+    const _this = this
     // Handle scrolling CD
     const cdThumbAnimate = cdThumb.animate([{ transform: 'rotate(360deg)' }], {
       duration: 20000,
@@ -119,7 +123,6 @@ const app = {
     })
     cdThumbAnimate.pause()
     // When users scroll
-    const _this = this
     document.onscroll = function () {
       cd.style.width =
         200 - window.scrollY > 0 ? 200 - window.scrollY + 'px' : 0
@@ -136,33 +139,54 @@ const app = {
     }
     // When users hit next button
     nextBtn.onclick = function () {
-      _this.nextSong()
+      if (_this.isRandom) {
+        _this.playRandomSong()
+      } else {
+        _this.nextSong()
+      }
       audio.play()
+      _this.render()
     }
     // When users hit previous button
     prevBtn.onclick = function () {
-      _this.prevSong()
+      if (_this.isRandom) {
+        _this.playRandomSong()
+      } else {
+        _this.prevSong()
+      }
       audio.play()
+      _this.render()
+    }
+    // When users hit random button
+    randomBtn.onclick = function () {
+      _this.isRandom = !_this.isRandom
+      randomBtn.classList.toggle('active')
+    }
+    // When users hit repeat button
+    repeatBtn.onclick = function () {
+      _this.isRepeat = !_this.isRepeat
+      repeatBtn.classList.toggle('active')
+      audio.loop = !audio.loop
     }
     // While song is being played
     audio.onplay = function () {
       player.classList.add('playing')
-      _this.isPlaying = !_this.isPlaying
+      _this.isPlaying = true
       cdThumbAnimate.play()
     }
     // While song is being paused
     audio.onpause = function () {
       player.classList.remove('playing')
-      _this.isPlaying = !_this.isPlaying
+      _this.isPlaying = false
       cdThumbAnimate.pause()
     }
     // Progress bar follows the music
     audio.ontimeupdate = function () {
       if (audio.duration) {
-        const progressPrecent = Math.floor(
+        const progressPercent = Math.floor(
           (audio.currentTime / audio.duration) * 100
         )
-        progress.value = progressPrecent
+        progress.value = progressPercent
       }
     }
     // While song is being seeked
@@ -194,16 +218,35 @@ const app = {
     }
     this.loadCurrentSong()
   },
+  // play random song
+  playRandomSong: function () {
+    let newIndex = this.currentIndex
+    do {
+      newIndex = Math.floor(Math.random() * this.songs.length)
+    } while (newIndex === this.currentIndex)
+    this.currentIndex = newIndex
+    this.loadCurrentSong()
+  },
+  // Play next song when ended
+  continuePlaying: function () {
+    audio.addEventListener('ended', function () {
+      nextBtn.onclick()
+    })
+  },
+
   // Start the application
   start: function () {
+    // Render songs to view
+    this.render()
+
     // Handle events of users
     this.handleEvent()
 
     // Take current song data
     this.loadCurrentSong()
 
-    // Render songs to view
-    this.render()
+    // Continue playing when song ended
+    this.continuePlaying()
   },
 }
 app.start()
