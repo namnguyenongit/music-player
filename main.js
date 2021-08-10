@@ -7,7 +7,7 @@
  * 6. Random -> done
  * 7. Next / repeat when song ended -> done
  * 8. Active song -> done
- * 9. Scroll active song into view
+ * 9. Scroll active song into view -> done (there's bug)
  * 10. Play song when click on song list
  */
 
@@ -98,7 +98,9 @@ const app = {
   render: function () {
     const htmls = this.songs.map((song, index) => {
       return `
-        <div class="song ${index === this.currentIndex ? 'active' : ''}">
+        <div class="song ${
+          index === this.currentIndex ? 'active' : ''
+        }" data-index = '${index}'>
           <div class="thumb" style="background-image: url('${song.image}')">
           </div>
           <div class="body">
@@ -146,6 +148,7 @@ const app = {
       }
       audio.play()
       _this.render()
+      _this.scrollIntoView()
     }
     // When users hit previous button
     prevBtn.onclick = function () {
@@ -156,6 +159,7 @@ const app = {
       }
       audio.play()
       _this.render()
+      _this.scrollIntoView()
     }
     // When users hit random button
     randomBtn.onclick = function () {
@@ -194,6 +198,22 @@ const app = {
       var newTime = (e.target.value * audio.duration) / 100
       audio.currentTime = newTime
     }
+    // When users hit the song on list
+    playlist.onclick = function (e) {
+      const songNode = e.target.closest('.song:not(.active)')
+      if (songNode || e.target.closest('.option')) {
+        // Click on song
+        if (songNode) {
+          _this.currentIndex = Number(songNode.dataset.index)
+          _this.loadCurrentSong()
+          _this.render()
+          audio.play()
+        }
+        // Click on option
+        if (e.target.closest('.option')) {
+        }
+      }
+    }
   },
   // Load current song
   loadCurrentSong: function () {
@@ -201,6 +221,23 @@ const app = {
     audio.setAttribute('src', currentSong.path)
     songName.innerText = currentSong.name
     cdThumb.style.backgroundImage = 'url(' + currentSong.image + ')'
+  },
+  // Scroll active song into view
+  scrollIntoView: function () {
+    setTimeout(() => {
+      $('.song.active').scrollIntoView(
+        {
+          block: 'end',
+          inline: 'center',
+          behavior: 'smooth',
+        },
+        {
+          block: 'center',
+          inline: 'center',
+          behavior: 'smooth',
+        }
+      )
+    }, 300)
   },
   // Load next song
   nextSong: function () {
