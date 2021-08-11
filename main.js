@@ -50,6 +50,12 @@ const app = {
   config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
   songs: [
     {
+      name: 'All You Need To Know',
+      singer: 'Griffin & Slander',
+      path: './assets/songs/AllYouNeedToKnow.mp3',
+      image: './assets/images/AllYouNeedToKnow.jpg',
+    },
+    {
       name: 'Bad Habits',
       singer: 'Ed Sheeran',
       path: './assets/songs/BadHabits.mp3',
@@ -60,6 +66,30 @@ const app = {
       singer: 'Aurora',
       path: './assets/songs/CureForMe.mp3',
       image: './assets/images/CureForMe.png',
+    },
+    {
+      name: 'Drive Safe',
+      singer: 'Rich Brian',
+      path: './assets/songs/DriveSafe.mp3',
+      image: './assets/images/DriveSafe.jpg',
+    },
+    {
+      name: 'Drown',
+      singer: 'Martin Garrix',
+      path: './assets/songs/Drown.mp3',
+      image: './assets/images/Drown.jpg',
+    },
+    {
+      name: 'Hello Anxiety',
+      singer: 'Phum Viphurit',
+      path: './assets/songs/HelloAnxiety.mp3',
+      image: './assets/images/HelloAnxiety.jpg',
+    },
+    {
+      name: 'Love In My Pocket',
+      singer: 'Rich Brian',
+      path: './assets/songs/LoveInMyPocket.mp3',
+      image: './assets/images/LoveInMyPocket.jpg',
     },
     {
       name: 'Mr.Angel',
@@ -86,6 +116,30 @@ const app = {
       image: './assets/images/Oreo.jpg',
     },
     {
+      name: 'Pink Champagne',
+      singer: 'Nick Lopez',
+      path: './assets/songs/PinkChampagne.mp3',
+      image: './assets/images/PinkChampagne.jpg',
+    },
+    {
+      name: 'Rather Be',
+      singer: 'Clean Bandit',
+      path: './assets/songs/RatherBe.mp3',
+      image: './assets/images/RatherBe.jpg',
+    },
+    {
+      name: 'Ruthless',
+      singer: 'The Marías',
+      path: './assets/songs/Ruthless.mp3',
+      image: './assets/images/Ruthless.jpg',
+    },
+    {
+      name: 'San Francisco Street',
+      singer: 'Sun Rai',
+      path: './assets/songs/SanFranciscoStreet.mp3',
+      image: './assets/images/SanFranciscoStreet.jpg',
+    },
+    {
       name: 'Stay',
       singer: 'The Kid LAROI, Justin Bieber',
       path: './assets/songs/Stay.mp3',
@@ -108,6 +162,12 @@ const app = {
       singer: 'Bruno Major',
       path: './assets/songs/TheMostBeautifulThing.mp3',
       image: './assets/images/TheMostBeautifulThing.jpg',
+    },
+    {
+      name: 'This Girl',
+      singer: 'Kungs',
+      path: './assets/songs/ThisGirl.mp3',
+      image: './assets/images/ThisGirl.jpg',
     },
   ],
   setConfig: function (key, value) {
@@ -251,10 +311,12 @@ const app = {
     // When user add a song to favorite
     addToFav.onclick = function () {
       alert('Added to favorite!')
+      coverLayer.onclick()
     }
     // When user share a song
     share.onclick = function () {
-      alert('Thank you for sharing this song!')
+      alert('Thank you for sharing this song <3')
+      window.open('https://facebook.com/nyamm.pasu')
     }
   },
   // Load config
