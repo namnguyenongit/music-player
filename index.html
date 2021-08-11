@@ -18,12 +18,13 @@
       <!-- Header -->
       <header>
         <h4>Now playing:</h4>
-        <h2>Song name</h2>
+        <h2></h2>
+        <p></p>
       </header>
   
       <!-- CD -->
       <div class="cd">
-        <div class="cd-thumb" style="background-image: url('https://i.ytimg.com/vi/jTLhQf5KJSc/maxresdefault.jpg')">
+        <div class="cd-thumb" style="background-image: url('')">
         </div>
       </div>
   
@@ -48,12 +49,23 @@
       </div>
   
       <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
-  
+      <div id="time-cover">
+        <div id="timer"></div>
+        <div id="duration">00:00</div>
+      </div>
       <audio id="audio" src=""></audio>
     </div>
   
     <!-- Playlist -->
     <div class="playlist"></div>
+    <div class="cover-layer"></div>
+    <div class="popup">
+      <div class="song-name"></div>
+      <ul>
+        <li class="add-to-fav">Add to favorite</li>
+        <li class="share">Share</li>
+      </ul>
+    </div>
   </div>
   <script src="./main.js"></script>
 </body>

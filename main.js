@@ -8,30 +8,46 @@
  * 7. Next / repeat when song ended -> done
  * 8. Active song -> done
  * 9. Scroll active song into view -> done (there's bug)
- * 10. Play song when click on song list
+ * 10. Play song when click on song list -> done
+ *
+ * Additions
+ * 1. Timer -> done
+ * 2. Options
  */
 
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
+const PLAYER_STORAGE_KEY = 'MUSIC_PLAYER'
+
+const dashboard = $('.dashboard')
 const playlist = $('.playlist')
 const cd = $('.cd')
 const audio = $('#audio')
 const player = $('.player')
 const playBtn = $('.btn-toggle-play')
 const songName = $('.dashboard > header > h2')
+const author = $('.dashboard > header > p')
 const cdThumb = $('.cd-thumb')
 const progress = $('.progress')
 const prevBtn = $('.btn-prev')
 const nextBtn = $('.btn-next')
 const randomBtn = $('.btn-random')
 const repeatBtn = $('.btn-repeat')
+const timer = $('#timer')
+const songDuration = $('#duration')
+const popup = $('.popup')
+const popupSongName = $('.song-name')
+const addToFav = $('.add-to-fav')
+const share = $('.share')
+const coverLayer = $('.cover-layer')
 
 const app = {
   currentIndex: 0,
   isPlaying: false,
   isRandom: false,
   isRepeat: false,
+  config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
   songs: [
     {
       name: 'Bad Habits',
@@ -94,6 +110,10 @@ const app = {
       image: './assets/images/TheMostBeautifulThing.jpg',
     },
   ],
+  setConfig: function (key, value) {
+    this.config[key] = value
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config))
+  },
   // Render songs to view
   render: function () {
     const htmls = this.songs.map((song, index) => {
@@ -161,16 +181,17 @@ const app = {
       _this.render()
       _this.scrollIntoView()
     }
-    // When users hit random button
-    randomBtn.onclick = function () {
-      _this.isRandom = !_this.isRandom
-      randomBtn.classList.toggle('active')
-    }
     // When users hit repeat button
     repeatBtn.onclick = function () {
       _this.isRepeat = !_this.isRepeat
+      _this.setConfig('isRepeat', _this.isRepeat)
       repeatBtn.classList.toggle('active')
-      audio.loop = !audio.loop
+    }
+    // When users hit random button
+    randomBtn.onclick = function () {
+      _this.isRandom = !_this.isRandom
+      _this.setConfig('isRandom', _this.isRandom)
+      randomBtn.classList.toggle('active')
     }
     // While song is being played
     audio.onplay = function () {
@@ -184,7 +205,7 @@ const app = {
       _this.isPlaying = false
       cdThumbAnimate.pause()
     }
-    // Progress bar follows the music
+    // Progress bar and timer
     audio.ontimeupdate = function () {
       if (audio.duration) {
         const progressPercent = Math.floor(
@@ -192,6 +213,8 @@ const app = {
         )
         progress.value = progressPercent
       }
+      _this.setTimer()
+      _this.displayDuration()
     }
     // While song is being seeked
     progress.oninput = function (e) {
@@ -201,25 +224,51 @@ const app = {
     // When users hit the song on list
     playlist.onclick = function (e) {
       const songNode = e.target.closest('.song:not(.active)')
-      if (songNode || e.target.closest('.option')) {
+      const optionNode = e.target.closest('.option')
+      const Node = e.target.closest('.song')
+      if (songNode || optionNode) {
+        // Click on option
+        if (optionNode) {
+          const songIndex = Number(Node.dataset.index)
+          popupSongName.innerHTML = _this.songs[songIndex].name
+          popup.style.display = 'block'
+          coverLayer.style.display = 'block'
+        }
         // Click on song
-        if (songNode) {
-          _this.currentIndex = Number(songNode.dataset.index)
+        else if (songNode) {
+          _this.currentIndex = Number(Node.dataset.index)
           _this.loadCurrentSong()
           _this.render()
           audio.play()
         }
-        // Click on option
-        if (e.target.closest('.option')) {
-        }
       }
     }
+    // Hide option onclick
+    coverLayer.onclick = function () {
+      coverLayer.style.display = 'none'
+      popup.style.display = 'none'
+    }
+    // When user add a song to favorite
+    addToFav.onclick = function () {
+      alert('Added to favorite!')
+    }
+    // When user share a song
+    share.onclick = function () {
+      alert('Thank you for sharing this song!')
+    }
+  },
+  // Load config
+  loadConfig: function () {
+    this.isRandom = this.config.isRandom
+    this.isRepeat = this.config.isRepeat
+    audio.loop = this.isRepeat
   },
   // Load current song
   loadCurrentSong: function () {
     let currentSong = this.songs[this.currentIndex]
     audio.setAttribute('src', currentSong.path)
     songName.innerText = currentSong.name
+    author.innerText = currentSong.singer
     cdThumb.style.backgroundImage = 'url(' + currentSong.image + ')'
   },
   // Scroll active song into view
@@ -270,9 +319,39 @@ const app = {
       nextBtn.onclick()
     })
   },
-
+  // Timer
+  setTimer: function () {
+    setInterval(() => {
+      var mins = Math.floor(audio.currentTime / 60)
+      var secs = Math.floor(audio.currentTime % 60)
+      if (secs < 10) {
+        secs = '0' + String(secs)
+      }
+      if (mins < 10) {
+        mins = '0' + String(mins)
+      }
+      timer.innerHTML = mins + ':' + secs
+    }, 100)
+  },
+  // Display song's duration
+  displayDuration: function () {
+    if (audio.duration) {
+      var mins = Math.floor(audio.duration / 60)
+      var secs = Math.floor(audio.duration % 60)
+      if (secs < 10) {
+        secs = '0' + String(secs)
+      }
+      if (mins < 10) {
+        mins = '0' + String(mins)
+      }
+      songDuration.innerHTML = mins + ':' + secs
+    }
+  },
   // Start the application
   start: function () {
+    // Load config
+    this.loadConfig()
+
     // Render songs to view
     this.render()
 
@@ -284,6 +363,10 @@ const app = {
 
     // Continue playing when song ended
     this.continuePlaying()
+
+    // Display first stat of repeat and random button
+    repeatBtn.classList.toggle('active', this.isRepeat)
+    randomBtn.classList.toggle('active', this.isRandom)
   },
 }
 app.start()

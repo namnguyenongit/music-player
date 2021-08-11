@@ -62,6 +62,12 @@ header h2 {
   font-size: 20px;
 }
 
+header p {
+  color: var(--text-color);
+  font-size: 12px;
+  font-weight: 500;
+}
+
 /* CD */
 .cd {
   display: flex;
@@ -128,11 +134,17 @@ header h2 {
 .progress::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 12px;
+  width: 0;
   height: 6px;
   background-color: var(--primary-color);
   cursor: pointer;
   box-shadow: -500px 0 0 500px var(--primary-color);
+}
+
+#time-cover {
+  display: flex;
+  justify-content: space-between;
+  color: #999;
 }
 
 /* PLAYLIST */
@@ -171,6 +183,7 @@ header h2 {
   border-radius: 50%;
   background-size: cover;
   margin: 0 8px;
+  box-shadow: 0 0 4px #333;
 }
 
 .song .body {
@@ -192,4 +205,43 @@ header h2 {
   padding: 16px 8px;
   color: #999;
   font-size: 18px;
+}
+/* POP UP */
+.popup {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding-top: 48px;
+  padding-bottom: 48px;
+  box-shadow: 10px 0 20px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 1;
+}
+.cover-layer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: none;
+}
+.popup .song-name {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 48px;
+}
+.popup li {
+  list-style-type: none;
+  height: 48px;
+  padding-left: 24px;
+  line-height: 48px;
+}
+.popup li:active {
+  background-color: rgba(0, 0, 0, 0.1);
 }
