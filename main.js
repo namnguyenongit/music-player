@@ -44,6 +44,7 @@ const coverLayer = $('.cover-layer')
 
 const app = {
   currentIndex: 0,
+  onOptionIndex: 0,
   isPlaying: false,
   isRandom: false,
   isRepeat: false,
@@ -54,120 +55,140 @@ const app = {
       singer: 'Griffin & Slander',
       path: './assets/songs/AllYouNeedToKnow.mp3',
       image: './assets/images/AllYouNeedToKnow.jpg',
+      link: 'https://youtu.be/QShq1KGbEOk',
     },
     {
       name: 'Bad Habits',
       singer: 'Ed Sheeran',
       path: './assets/songs/BadHabits.mp3',
       image: './assets/images/BadHabits.jpg',
+      link: 'https://youtu.be/orJSJGHjBLI',
     },
     {
       name: 'Cure For Me',
       singer: 'Aurora',
       path: './assets/songs/CureForMe.mp3',
       image: './assets/images/CureForMe.png',
+      link: 'https://youtu.be/K17df81RL9Y',
     },
     {
       name: 'Drive Safe',
       singer: 'Rich Brian',
       path: './assets/songs/DriveSafe.mp3',
       image: './assets/images/DriveSafe.jpg',
+      link: 'https://youtu.be/7bFFaTGOVI8',
     },
     {
       name: 'Drown',
       singer: 'Martin Garrix',
       path: './assets/songs/Drown.mp3',
       image: './assets/images/Drown.jpg',
+      link: 'https://youtu.be/iGS07iQaAcg',
     },
     {
       name: 'Hello Anxiety',
       singer: 'Phum Viphurit',
       path: './assets/songs/HelloAnxiety.mp3',
       image: './assets/images/HelloAnxiety.jpg',
+      link: 'https://youtu.be/b7ffmtnuSGM',
     },
     {
       name: 'Love In My Pocket',
       singer: 'Rich Brian',
       path: './assets/songs/LoveInMyPocket.mp3',
       image: './assets/images/LoveInMyPocket.jpg',
+      link: 'https://youtu.be/qBG-tyMWNeo',
     },
     {
       name: 'Mr.Angel',
       singer: 'Tommy Newport',
       path: './assets/songs/MrAngel.mp3',
       image: './assets/images/MrAngel.jpg',
+      link: 'https://youtu.be/gTUYXb1unTI',
     },
     {
       name: 'New Light',
       singer: 'John Mayer',
       path: './assets/songs/NewLight.mp3',
       image: './assets/images/NewLight.jpg',
+      link: 'https://youtu.be/mQ055hHdxbE',
     },
     {
       name: 'Nothing',
       singer: 'Bruno Major',
       path: './assets/songs/Nothing.mp3',
       image: './assets/images/Nothing.jpeg',
+      link: 'https://youtu.be/ucRVDoFkcxc',
     },
     {
       name: 'Oreo',
       singer: 'Shotgun Willy',
       path: './assets/songs/Oreo.mp3',
       image: './assets/images/Oreo.jpg',
+      link: 'https://youtu.be/tqiuE9g3Uss',
     },
     {
       name: 'Pink Champagne',
       singer: 'Nick Lopez',
       path: './assets/songs/PinkChampagne.mp3',
       image: './assets/images/PinkChampagne.jpg',
+      link: 'https://youtu.be/BAxSvf-vxqk',
     },
     {
       name: 'Rather Be',
       singer: 'Clean Bandit',
       path: './assets/songs/RatherBe.mp3',
       image: './assets/images/RatherBe.jpg',
+      link: 'https://youtu.be/m-M1AtrxztU',
     },
     {
       name: 'Ruthless',
       singer: 'The Marías',
       path: './assets/songs/Ruthless.mp3',
       image: './assets/images/Ruthless.jpg',
+      link: 'https://youtu.be/Y4YYSe27CPw',
     },
     {
       name: 'San Francisco Street',
       singer: 'Sun Rai',
       path: './assets/songs/SanFranciscoStreet.mp3',
       image: './assets/images/SanFranciscoStreet.jpg',
+      link: 'https://youtu.be/9zEl-FQLI4A',
     },
     {
       name: 'Stay',
       singer: 'The Kid LAROI, Justin Bieber',
       path: './assets/songs/Stay.mp3',
       image: './assets/images/Stay.jpg',
+      link: 'https://youtu.be/kTJczUoc26U',
     },
     {
       name: 'Sunflower',
       singer: 'Post Malone, Swae Lee',
       path: './assets/songs/Sunflower.mp3',
       image: './assets/images/Sunflower.jpg',
+      link: 'https://youtu.be/ApXoWvfEYVU',
     },
     {
       name: 'Sunflower',
       singer: 'Rex Orange Country',
       path: './assets/songs/SunflowerRex.mp3',
       image: './assets/images/SunflowerRex.jpg',
+      link: 'https://youtu.be/Z9e7K6Hx_rY',
     },
     {
       name: 'The Most Beautiful Thing',
       singer: 'Bruno Major',
       path: './assets/songs/TheMostBeautifulThing.mp3',
       image: './assets/images/TheMostBeautifulThing.jpg',
+      link: 'https://youtu.be/1nml-_YE2OU',
     },
     {
       name: 'This Girl',
       singer: 'Kungs',
       path: './assets/songs/ThisGirl.mp3',
       image: './assets/images/ThisGirl.jpg',
+      link: 'https://youtu.be/2Y6Nne8RvaA',
     },
   ],
   setConfig: function (key, value) {
@@ -205,12 +226,12 @@ const app = {
     })
     cdThumbAnimate.pause()
     // When users scroll
-    document.onscroll = function () {
+    document.addEventListener('scroll', () => {
       cd.style.width =
         200 - window.scrollY > 0 ? 200 - window.scrollY + 'px' : 0
       cd.style.opacity =
         200 - window.scrollY > 0 ? (200 - window.scrollY) / 200 : 0
-    }
+    })
     // When users hit play button
     playBtn.onclick = function () {
       if (!_this.isPlaying) {
@@ -293,6 +314,7 @@ const app = {
           popupSongName.innerHTML = _this.songs[songIndex].name
           popup.style.display = 'block'
           coverLayer.style.display = 'block'
+          _this.onOptionIndex = songIndex
         }
         // Click on song
         else if (songNode) {
@@ -310,13 +332,14 @@ const app = {
     }
     // When user add a song to favorite
     addToFav.onclick = function () {
-      alert('Added to favorite!')
+      alert('Added to favorite!\nJust an announcement btw, nothing changed :v')
       coverLayer.onclick()
     }
     // When user share a song
     share.onclick = function () {
-      alert('Thank you for sharing this song <3')
-      window.open('https://facebook.com/nyamm.pasu')
+      _this.copyToClipboard(_this.onOptionIndex)
+      alert('Thank you for sharing this song <3\nLink copied to clipboard!')
+      coverLayer.onclick()
     }
   },
   // Load config
@@ -324,6 +347,11 @@ const app = {
     this.isRandom = this.config.isRandom
     this.isRepeat = this.config.isRepeat
     audio.loop = this.isRepeat
+  },
+  // Copy link to clipboard
+  copyToClipboard: function (index) {
+    let link = this.songs[index].link
+    navigator.clipboard.writeText(link)
   },
   // Load current song
   loadCurrentSong: function () {
@@ -338,7 +366,7 @@ const app = {
     setTimeout(() => {
       $('.song.active').scrollIntoView(
         {
-          block: 'end',
+          block: 'center',
           inline: 'center',
           behavior: 'smooth',
         },
