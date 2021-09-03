@@ -12,7 +12,7 @@
  *
  * Additions
  * 1. Timer -> done
- * 2. Options
+ * 2. Options -> done
  */
 
 const $ = document.querySelector.bind(document)
